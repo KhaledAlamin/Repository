@@ -1,2 +1,4 @@
 This is an example to deal with github
-This the branch trying to edit and pull to understand how it works
+This is a branch trying to edit and pull to understand how it works.
+
+var ex = "An example";
