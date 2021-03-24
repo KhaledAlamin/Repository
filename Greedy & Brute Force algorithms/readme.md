@@ -7,8 +7,8 @@ Example:
 
 Algorithms:
 - Greedy:
--- While threshold not reached add avaliable food based on any given constrains.
+  - While threshold not reached add avaliable food based on any given constrains.
 - Brute force
--- enumerate all possible combinations of items
--- Remove all combinations that exceed the calories threshold
--- From the remaining combinations, choose the foods with the highest calories
+  - enumerate all possible combinations of items
+  - Remove all combinations that exceed the calories threshold
+  - From the remaining combinations, choose the foods with the highest calories
