@@ -1,110 +1,167 @@
-"""In this python file, I am trying to solve the problem
-following mit 6.002 open courses where the objective is maximise the value
-of a menu of foods"""
-
-
 # I want to make a class to save any kind of food with its value in dollar 
 # and its weight in calories
 import random
 class worker(object):
-	def __init__(self, name, value, weight):
+	def __init__(self, name, num, salary, profit):
 		self.name = name
-		self.value = value
-		self.weight	= weight
-	def get_value(self):
-		return self.value
-	def get_weight(self):
-		return self.weight
-	def density(self):
-		return self.value/self.weight
+		self.num = num
+		self.salary	= salary
+		self.profit	= profit
+	def get_num(self):
+		return self.num
+	def get_salary(self):
+		return self.salary
+	def get_profit(self):
+		return self.profit
+	def net_salary(self):
+		return self.profit - self.salary
 	def __add__(self, other):
 		return self.object + other
 	def __str__(self):
-		return self.name + ": < " + str(self.value) + ', ' + str(self.weight)\
-		+ ' >'
+		return self.name + ": < " + str(self.num) + ', ' + str(self.salary)\
+		+ ', ' + str(self.profit) + ' >'
 
-# next I want to build a menu from the food that I have
+# next I want to build a profile for every worker
 
-def build_menu(names, values, weights):
-	menu = []
-	for i in range(len(values)):
-		menu.append(food(names[i], values[i], weights[i]))
-	return menu
-
-
-def building_large_menu(items, max_value, max_weight):
-	foods = []
-	for i in range(1, items):
-		foods.append(food(str(i), random.randint(1, max_value),\
-			random.randint(1, max_weight)))
-	return foods	
+def build_profile(names, nums, salaries, profits):
+	profile = []
+	for i in range(len(nums)):
+		profile.append(worker(names[i],nums[i], salaries[i], profits[i]))
+	return profile
 
 
-# Now I have the menu what I want is to build optimization problem to choose 
-# the maximum food in value given a constrain of weight in calories that
-# I can not exceed
+def building_large_profile(workers, max_nums, max_salaries, max_profits):
+	profile = []
+	for i in range(1, workers):
+		profile.append(worker(str(i), random.randint(1, max_nums), \
+		random.randint(1, max_salaries), random.randint(1, max_profits)))
+	return profile	
+
+
+# Now I have the profiles what I want is to build optimization problem to choose 
+# the maximum profits given a constrain of budget I can not exceed
 # Two algorithm will be used: Greedy and brute force
-def greedy(items, max_weight, key):
-	item_sort = sorted(items, key = key, reverse = True)
-	tot_value, tot_weight = 0.0, 0.0
+def greedy(profile, budget, key):
+	profile_sort = sorted(profile, key = key, reverse = True)
+	tot_salary, tot_profit = 0.0, 0.0
 	result= []
-	for i in range(len(item_sort)):
-		if item_sort[i].get_weight() + tot_weight < max_weight:
-			tot_weight += item_sort[i].get_weight()
-			tot_value += item_sort[i].get_value()
-			result.append(item_sort[i])
-	return (result, tot_value)
+	for i in range(len(profile_sort)):
+		if profile_sort[i].get_salary() + tot_salary < budget:
+			tot_salary += profile_sort[i].get_salary()
+			tot_profit += profile_sort[i].get_profit()
+			result.append(profile_sort[i])
+	return (result, tot_profit)
 
-def test_greedy(items, max_weight, key):
-	res, value = greedy(items, max_weight, key)
-	print('Total value of the food take are: ' + str(value))
-	for item in res:
-		print("		" + str(item))
+def test_greedy(profiles, budget, key):
+	res, profit = greedy(profiles, budget, key)
+	print('Total profits of the workers taken are: ' + str(profit))
+	for profile in res:
+		print("		" + str(profile))
 
-def test_greedys(items, max_weight):
-	print("Using greedy by value to assign " + str(max_weight) + ' calories')
-	test_greedy(items, max_weight, food.get_value)
-	print("Using greedy by weight to assign " + str(max_weight) + ' calories')
-	test_greedy(items, max_weight, lambda x: 1/food.get_weight(x))
-	print("Using greedy by density to assign " + str(max_weight) + ' calories')
-	test_greedy(items, max_weight, food.density)
+def test_greedys(profiles, budget):
+	print("Using greedy by profit to assign workers with budget " + str(budget) + ' $')
+	test_greedy(profiles, budget, worker.get_profit)
+	print("Using greedy by net_salary to assign  workers with budget " + str(budget) + ' $')
+	test_greedy(profiles, budget, lambda x: 1/worker.net_salary(x))
+	print("Using greedy by salary to assign workers with budget " + str(budget) + ' $')
+	test_greedy(profiles, budget, lambda x: 1/worker.get_salary(x))
 
 
-def max_value(items, max_weight, mem = {}):
-	if (len(items), max_weight) in mem:
-		result = mem[len(items), max_weight]
-	elif items == [] or max_weight == 0:
+def max_value(profiles, budget, mem = {}):
+	if (len(profiles), budget) in mem:
+		result = mem[len(profiles), budget]
+	elif profiles == [] or budget == 0:
 		result = ((), 0)
-	elif items[0].get_weight() > max_weight:
-		result = max_value(items[1:], max_weight)
+	elif profiles[0].get_salary() > budget:
+		result = max_value(profiles[1:], budget)
 	else:
-		next_item = items[0]
-		to_take, to_take_value = max_value(items[1:], max_weight - next_item.get_weight())
-		to_take_value += next_item.get_value()
-		not_take, not_value = max_value(items[1:], max_weight)
+		next_item = profiles[0]
+		to_take, to_take_value = max_value(profiles[1:], budget - next_item.get_salary())
+		to_take_value += next_item.get_profit()
+		not_take, not_value = max_value(profiles[1:], budget)
 		if to_take_value > not_value:
 			result = (to_take + (next_item,), to_take_value)
 		else:
 			result = (not_take, not_value)
-	mem[len(items), max_weight] = result
+	mem[len(profiles), budget] = result
 	return result
 
-def test_maxValue(items, max_weight):
-	result = max_value(items, max_weight)
-	print('Using Brute force to assign ' + str(max_weight) + ' calories \
-	 \nTotal value of the food taken are: ' + str(result[1]))
-	for item in result[0]:
-		print("		" + str(item))
+def test_maxValue(profiles, budget):
+	result = max_value(profiles, budget)
+	print('Using Brute force to assign budget ' + str(budget) + ' $ \
+	 \nTotal profits of the workers taken are: ' + str(result[1]))
+	for profile in result[0]:
+		print("		" + str(profile))
 
 
-names = ['wine', 'beer', 'pizza', 'burger', 'fries',
-		'cola', 'apple', 'donut', 'cake']
-values = [89, 90, 95, 100, 90, 79, 50, 10]
+###	-------------- Testing ---------------#####
 
-calories = [123, 154, 258, 354, 365, 150, 95, 195]
+random.seed(42)
 
-foods = build_menu(names, values, calories)
-foods = building_large_menu(50, 300, 250)
-test_greedys(foods, 900)
+num_workers = [13, 17, 10, 121, 69, 13, 82, 59, 110, 4, 126, 42, 102, 64, 93]
+salary = [1300, 9805, 2931, 14693, 14137, 2674, 10325, 8297, 10471, 918, 14193, 14137, 2674, 10325, 8297]
+profit = [12000,10325,17716,50870,43702,7151,59544,29361,38447,12000,30000,43702,7151,59544,29361]
+names = []
+for i in range(len(num_workers)):
+    names.append('worker' + str(i))
+
+#workers = build_profile(names, num_workers, salary, profit)
+
+workers = building_large_profile(50, 150, 10732, 6000)
+test_greedys(workers, 15000)
 print()
-test_maxValue(foods, 900)
+test_maxValue(workers, 15000)
+
+
+'''						RESULTS
+
+Using greedy by profit to assign workers with budget 15000 $
+Total profits of the workers taken are: 33332.0
+		15: < 68, 712, 5978 >
+		27: < 44, 8752, 5974 >
+		7: < 144, 3258, 5866 >
+		46: < 142, 189, 5573 >
+		20: < 18, 751, 5418 >
+		17: < 97, 1292, 4523 >
+Using greedy by net_salary to assign  workers with budget 15000 $
+Total profits of the workers taken are: 18432.0
+		24: < 94, 2665, 3033 >
+		38: < 138, 4305, 4789 >
+		37: < 36, 4041, 4599 >
+		48: < 88, 1828, 2405 >
+		33: < 69, 1085, 1729 >
+		31: < 84, 917, 1877 >
+Using greedy by salary to assign workers with budget 15000 $
+Total profits of the workers taken are: 37482.0
+		46: < 142, 189, 5573 >
+		1: < 29, 410, 2254 >
+		4: < 109, 521, 245 >
+		15: < 68, 712, 5978 >
+		20: < 18, 751, 5418 >
+		31: < 84, 917, 1877 >
+		33: < 69, 1085, 1729 >
+		17: < 97, 1292, 4523 >
+		13: < 27, 1520, 3113 >
+		22: < 60, 1655, 3114 >
+		42: < 13, 1797, 1253 >
+		48: < 88, 1828, 2405 >
+
+Using Brute force to assign budget 15000 $ 	 
+Total profits of the workers taken are: 45410
+		46: < 142, 189, 5573 >
+		33: < 69, 1085, 1729 >
+		31: < 84, 917, 1877 >
+		22: < 60, 1655, 3114 >
+		20: < 18, 751, 5418 >
+		17: < 97, 1292, 4523 >
+		15: < 68, 712, 5978 >
+		13: < 27, 1520, 3113 >
+		10: < 2, 2616, 5720 >
+		7: < 144, 3258, 5866 >
+		4: < 109, 521, 245 >
+		1: < 29, 410, 2254 >
+
+As seen the Brute force give the best profits for the problem with
+Compelxity of time wiht O(nlogn) compared with the greedy algorthim
+
+'''
