@@ -1,12 +1,12 @@
-"""In this python file, I am trying to solve a knapsack problem
-following mit open courses where the objective is maximise the value
+"""In this python file, I am trying to solve the problem
+following mit 6.002 open courses where the objective is maximise the value
 of a menu of foods"""
 
 
 # I want to make a class to save any kind of food with its value in dollar 
 # and its weight in calories
 import random
-class food(object):
+class worker(object):
 	def __init__(self, name, value, weight):
 		self.name = name
 		self.value = value
