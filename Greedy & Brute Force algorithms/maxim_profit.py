@@ -1,12 +1,11 @@
-# I want to make a class to save any kind of food with its value in dollar 
-# and its weight in calories
+# I want to make a class to save any kind of worker contain number of workers, worker's salary in dollar and the profit they may acquired to the hiring company
 import random
 class worker(object):
 	def __init__(self, name, num, salary, profit):
 		self.name = name
 		self.num = num
-		self.salary	= salary
-		self.profit	= profit
+		self.salary = salary
+		self.profit = profit
 	def get_num(self):
 		return self.num
 	def get_salary(self):
@@ -38,9 +37,11 @@ def building_large_profile(workers, max_nums, max_salaries, max_profits):
 	return profile	
 
 
-# Now I have the profiles what I want is to build optimization problem to choose 
-# the maximum profits given a constrain of budget I can not exceed
+# Now I have the profiles what I want is to build an optimization problem to choose 
+# the maximum profits given a constrain of a budget I can not exceed
 # Two algorithm will be used: Greedy and brute force
+
+# Greedy
 def greedy(profile, budget, key):
 	profile_sort = sorted(profile, key = key, reverse = True)
 	tot_salary, tot_profit = 0.0, 0.0
@@ -57,7 +58,7 @@ def test_greedy(profiles, budget, key):
 	print('Total profits of the workers taken are: ' + str(profit))
 	for profile in res:
 		print("		" + str(profile))
-
+# Apply greedy based on different feature to optimize (profit to get, net salary of the workers, or gross salary)
 def test_greedys(profiles, budget):
 	print("Using greedy by profit to assign workers with budget " + str(budget) + ' $')
 	test_greedy(profiles, budget, worker.get_profit)
@@ -66,7 +67,7 @@ def test_greedys(profiles, budget):
 	print("Using greedy by salary to assign workers with budget " + str(budget) + ' $')
 	test_greedy(profiles, budget, lambda x: 1/worker.get_salary(x))
 
-
+# Brute Force
 def max_value(profiles, budget, mem = {}):
 	if (len(profiles), budget) in mem:
 		result = mem[len(profiles), budget]
@@ -162,6 +163,6 @@ Total profits of the workers taken are: 45410
 		1: < 29, 410, 2254 >
 
 As seen the Brute force give the best profits for the problem with
-Compelxity of time wiht O(nlogn) compared with the greedy algorthim
+Compelxity of time with O(nlogn) compared with the greedy algorthim
 
 '''
