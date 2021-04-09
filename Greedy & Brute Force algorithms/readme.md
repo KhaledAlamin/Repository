@@ -1,6 +1,6 @@
 # Application:
 
-- A company wants to hire maximum number of people to increase the profit on a field based on limited budget (30000$).
+- A company wants to hire maximum number of people to increase the profit on a field based on limited budget (15000$).
 
 ## data:
 | # of workers  | salary | Profit |
